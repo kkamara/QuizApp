@@ -59,7 +59,8 @@
                     android:id="@+id/name"
                     android:hint="@string/name"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
