@@ -67,10 +67,10 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         questionsList = Constants.getQuestions()
         Log.d("QuestionSize", "${questionsList.size}")
 
-        setQuestion()
+        showNextQuestion()
     }
 
-    private fun setQuestion() {
+    private fun showNextQuestion() {
         resetOptions()
         val question = questionsList[questionsCounter]
         flagImage.setImageResource(question.image)
@@ -128,7 +128,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 if (!answered) {
                     checkAnswer()
                 } else {
-                    setQuestion()
+                    showNextQuestion()
                 }
                 selectedAnswer = 0
             }
