@@ -1,5 +1,6 @@
 package com.kelvinkamara.quizapp.ui
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -12,8 +13,6 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.kelvinkamara.quizapp.R
 import com.kelvinkamara.quizapp.model.Question
 import com.kelvinkamara.quizapp.utils.Constants
@@ -36,16 +35,13 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private var selectedAnswer = 0
     private lateinit var currentQuestion: Question
     private var answered = false
+    private lateinit var name: String
+    private var score = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_questions)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
         progressBar = findViewById(R.id.progressBar)
         textViewProgress = findViewById(R.id.text_view_progress)
@@ -68,25 +64,40 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         Log.d("QuestionSize", "${questionsList.size}")
 
         showNextQuestion()
+
+        if (intent.hasExtra(Constants.USER_NAME)) {
+            name = intent.getStringExtra(Constants.USER_NAME)!!
+        }
     }
 
     private fun showNextQuestion() {
-        resetOptions()
-        val question = questionsList[questionsCounter]
-        flagImage.setImageResource(question.image)
-        progressBar.progress = questionsCounter
-        textViewProgress.text = "${questionsCounter + 1}/${progressBar.max}"
-        textViewQuestion.text = question.question
-        textViewOptionOne.text = question.optionOne
-        textViewOptionTwo.text = question.optionTwo
-        textViewOptionThree.text = question.optionThree
-        textViewOptionFour.text = question.optionFour
 
        if (questionsCounter < questionsList.size) {
            checkButton.text = "CHECK"
            currentQuestion = questionsList[questionsCounter]
+
+           resetOptions()
+           val question = questionsList[questionsCounter]
+           flagImage.setImageResource(question.image)
+           progressBar.progress = questionsCounter
+           textViewProgress.text = "${questionsCounter + 1}/${progressBar.max}"
+           textViewQuestion.text = question.question
+           textViewOptionOne.text = question.optionOne
+           textViewOptionTwo.text = question.optionTwo
+           textViewOptionThree.text = question.optionThree
+           textViewOptionFour.text = question.optionFour
        } else {
            checkButton.text = "FINISH"
+
+           Intent(
+               this,
+               ResultActivity::class.java
+           ).also {
+               it.putExtra(Constants.USER_NAME, name)
+               it.putExtra(Constants.SCORE, score)
+               it.putExtra(Constants.TOTAL_QUESTIONS, questionsList.size)
+               startActivity(it)
+           }
        }
 
         questionsCounter++
@@ -151,6 +162,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         answered = true
 
         if (selectedAnswer == currentQuestion.correctAnswer) {
+            score++
             highlightAnswer(selectedAnswer)
         } else {
             when(selectedAnswer) {
