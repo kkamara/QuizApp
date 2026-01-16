@@ -63,7 +63,7 @@ object Constants {
         val quest7 = Question(
             1,"Which country does this flag belong to?",
             R.drawable.romania_flag, "Romania",
-            "Romania", "Ireland",
+            "Belgium", "Ireland",
             "Italy", 1
         )
         questions.add(quest7)
